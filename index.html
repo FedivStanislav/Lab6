@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <title>Lights Out</title>
+    <style>
+        #grid { display: inline-grid; grid-template-columns: repeat(5, 40px); gap: 2px; }
+        .cell {
+            width: 40px; height: 40px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            display: flex; align-items: center; justify-content: center;
+            user-select: none;
+            font-weight: bold;
+        }
+        .on  { background: yellow; }
+        .off { background: #333; color: #fff; }
+    </style>
+</head>
+<body>
+    <h1>Lights Out</h1>
+    <label for="levelSelect">Рівень:</label>
+    <select id="levelSelect">
+        <option value="">— виберіть —</option>
+    </select>
+    <button id="resetBtn">Скинути</button>
+    <div>
+        Ходи: <span id="moveCount">0</span> (мінімум: <span id="minSteps">–</span>)
+    </div>
+    <div id="grid"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
