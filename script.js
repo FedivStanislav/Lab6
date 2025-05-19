@@ -1,15 +1,23 @@
-document.addEventListener('DOMContentLoaded', () => {
-    fetch('data/levels.json')
-        .then(res => res.json())
-        .then(levelsData => initGame(levelsData))
-        .catch(err => console.error('Не вдалося завантажити рівні:', err));
-});
-
 let currentGrid = [];
 let moveCount = 0;
 let minSteps = 0;
+let initialGrid = [];
+let timer = 0;
+let timerInterval = null;
+let currentLevelKey = '';
+let levels = {};
 
-function initGame(levels) {
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('data/levels.json')
+        .then(res => res.json())
+        .then(levelsData => {
+            levels = levelsData;
+            initGame();
+        })
+        .catch(err => console.error('Не вдалося завантажити рівні:', err));
+});
+
+function initGame() {
     const select = document.getElementById('levelSelect');
 
     for (let key of Object.keys(levels)) {
@@ -20,39 +28,57 @@ function initGame(levels) {
     }
 
     select.addEventListener('change', () => {
-        if (!select.value) return resetBoard();
+        if (!select.value) {
+            resetBoard();
+            return;
+        }
+        currentLevelKey = select.value;
         loadLevel(levels[select.value]);
     });
 
-    document.getElementById('resetBtn').addEventListener('click', resetBoard);
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        if (currentLevelKey) loadLevel(levels[currentLevelKey]); // Рестарт
+    });
+
+    document.getElementById('newGameBtn').addEventListener('click', () => {
+        document.getElementById('levelSelect').value = '';
+        stopTimer();
+        resetBoard();
+    });
 }
 
 function loadLevel({ grid, minSteps: m }) {
-    // Зберігаємо копію початкового стану
+    initialGrid = grid.map(row => row.slice());
     currentGrid = grid.map(row => row.slice());
     moveCount = 0;
     minSteps = m;
     document.getElementById('moveCount').textContent = moveCount;
     document.getElementById('minSteps').textContent = minSteps;
     renderGrid();
+    startTimer();
 }
 
 function resetBoard() {
     currentGrid = [];
+    initialGrid = [];
     document.getElementById('grid').innerHTML = '';
     document.getElementById('moveCount').textContent = '0';
     document.getElementById('minSteps').textContent = '–';
+    document.getElementById('timer').textContent = '0:00';
+    stopTimer();
 }
 
 function renderGrid() {
     const container = document.getElementById('grid');
     container.innerHTML = '';
+    if (!currentGrid.length) return;
+
     container.style.gridTemplateColumns = `repeat(${currentGrid[0].length}, 40px)`;
 
     currentGrid.forEach((row, r) => {
         row.forEach((cell, c) => {
             const div = document.createElement('div');
-            div.className = `cell ${(cell ? 'on':'off')}`;
+            div.className = `cell ${cell ? 'on' : 'off'}`;
             div.dataset.r = r;
             div.dataset.c = c;
             div.addEventListener('click', onCellClick);
@@ -64,18 +90,22 @@ function renderGrid() {
 function onCellClick(e) {
     const r = +e.currentTarget.dataset.r;
     const c = +e.currentTarget.dataset.c;
-    // Міняємо стан клітинки та суміжних
+
     toggle(r, c);
-    toggle(r-1, c);
-    toggle(r+1, c);
-    toggle(r, c-1);
-    toggle(r, c+1);
+    toggle(r - 1, c);
+    toggle(r + 1, c);
+    toggle(r, c - 1);
+    toggle(r, c + 1);
 
     moveCount++;
     document.getElementById('moveCount').textContent = moveCount;
     updateUI();
+
     if (checkWin()) {
-        setTimeout(() => alert(`Вітаю! Ви перемогли за ${moveCount} ходів (мінімум — ${minSteps}).`), 100);
+        stopTimer();
+        setTimeout(() => {
+            alert(`Вітаю! Ви перемогли за ${moveCount} ходів та ${formatTime(timer)} (мінімум — ${minSteps}).`);
+        }, 100);
     }
 }
 
@@ -86,11 +116,16 @@ function toggle(r, c) {
 
 function updateUI() {
     document.querySelectorAll('#grid .cell').forEach(div => {
-        const r = +div.dataset.r, c = +div.dataset.c;
-        div.className = `cell ${(currentGrid[r][c] ? 'on':'off')}`;
+        const r = +div.dataset.r;
+        const c = +div.dataset.c;
+        div.className = `cell ${currentGrid[r][c] ? 'on' : 'off'}`;
     });
 }
 
 function checkWin() {
     return currentGrid.every(row => row.every(cell => cell === 0));
 }
+
+// Таймер
+
+function startTime
