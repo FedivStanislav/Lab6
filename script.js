@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function initGame() {
     const select = document.getElementById('levelSelect');
 
-
     for (let key of Object.keys(levels)) {
         const opt = document.createElement('option');
         opt.value = key;
@@ -34,22 +33,23 @@ function initGame() {
             return;
         }
         currentLevelKey = select.value;
-        loadLevel(levels[currentLevelKey]);
+        loadLevel(levels[select.value]);
     });
 
-    
     document.getElementById('resetBtn').addEventListener('click', () => {
-        if (currentLevelKey) {
-            loadLevel(levels[currentLevelKey]);
-        }
+        if (currentLevelKey) loadLevel(levels[currentLevelKey]); // Рестарт
     });
 
-    document.getElementById('newGameBtn').addEventListener('click', () => {
-        select.value = '';
-        currentLevelKey = '';
-        stopTimer();
-        resetBoard();
-    });
+    // Додаємо кнопку "Нова гра", перевір, що вона є в HTML
+    const newGameBtn = document.getElementById('newGameBtn');
+    if (newGameBtn) {
+        newGameBtn.addEventListener('click', () => {
+            document.getElementById('levelSelect').value = '';
+            stopTimer();
+            resetBoard();
+            currentLevelKey = '';
+        });
+    }
 }
 
 function loadLevel({ grid, minSteps: m }) {
@@ -57,7 +57,6 @@ function loadLevel({ grid, minSteps: m }) {
     currentGrid = grid.map(row => row.slice());
     moveCount = 0;
     minSteps = m;
-
     document.getElementById('moveCount').textContent = moveCount;
     document.getElementById('minSteps').textContent = minSteps;
     renderGrid();
@@ -133,11 +132,10 @@ function checkWin() {
 }
 
 
-
 function startTimer() {
-    stopTimer(); 
+    stopTimer();
     timer = 0;
-    document.getElementById('timer').textContent = '0:00';
+    document.getElementById('timer').textContent = formatTime(timer);
     timerInterval = setInterval(() => {
         timer++;
         document.getElementById('timer').textContent = formatTime(timer);
