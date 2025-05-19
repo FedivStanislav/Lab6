@@ -4,19 +4,37 @@
     <meta charset="UTF-8" />
     <title>Lights Out</title>
     <style>
-        #grid { display: inline-grid; grid-template-columns: repeat(5, 40px); gap: 2px; }
+        #grid {
+            display: inline-grid;
+            grid-template-columns: repeat(5, 40px);
+            gap: 2px;
+            margin-top: 10px;
+        }
         .cell {
-            width: 40px; height: 40px;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
             border: 1px solid #ccc;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             user-select: none;
             font-weight: bold;
         }
         .on  { background: yellow; }
         .off { background: #333; color: #fff; }
         button {
-            margin: 5px;
+            margin-left: 5px;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        #controls {
+            margin-top: 10px;
+        }
+        #stats {
+            margin-top: 10px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -28,11 +46,13 @@
         <option value="">— виберіть —</option>
     </select>
 
-    <button id="newGameBtn">Нова гра</button>
-    <button id="resetBtn">Рестарт</button>
+    <div id="controls">
+        <button id="resetBtn">Скинути</button>
+        <button id="newGameBtn">Нова гра</button>
+    </div>
 
-    <div>
-        Ходи: <span id="moveCount">0</span> (мінімум: <span id="minSteps">–</span>)<br>
+    <div id="stats">
+        Ходи: <span id="moveCount">0</span> (мінімум: <span id="minSteps">–</span>)<br/>
         Час: <span id="timer">0:00</span>
     </div>
 
