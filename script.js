@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initGame() {
     const select = document.getElementById('levelSelect');
 
+    // Додаємо варіанти вибору рівнів
     for (let key of Object.keys(levels)) {
         const opt = document.createElement('option');
         opt.value = key;
@@ -27,21 +28,27 @@ function initGame() {
         select.appendChild(opt);
     }
 
+    // Обробник вибору рівня
     select.addEventListener('change', () => {
         if (!select.value) {
             resetBoard();
             return;
         }
         currentLevelKey = select.value;
-        loadLevel(levels[select.value]);
+        loadLevel(levels[currentLevelKey]);
     });
 
+    // Кнопка "Рестарт" — перезапуск поточного рівня
     document.getElementById('resetBtn').addEventListener('click', () => {
-        if (currentLevelKey) loadLevel(levels[currentLevelKey]); // Рестарт
+        if (currentLevelKey) {
+            loadLevel(levels[currentLevelKey]);
+        }
     });
 
+    // Кнопка "Нова гра" — скидаємо вибір і дошку
     document.getElementById('newGameBtn').addEventListener('click', () => {
-        document.getElementById('levelSelect').value = '';
+        select.value = '';
+        currentLevelKey = '';
         stopTimer();
         resetBoard();
     });
@@ -52,6 +59,7 @@ function loadLevel({ grid, minSteps: m }) {
     currentGrid = grid.map(row => row.slice());
     moveCount = 0;
     minSteps = m;
+
     document.getElementById('moveCount').textContent = moveCount;
     document.getElementById('minSteps').textContent = minSteps;
     renderGrid();
@@ -128,4 +136,25 @@ function checkWin() {
 
 // Таймер
 
-function startTime
+function startTimer() {
+    stopTimer(); // якщо вже є таймер, зупиняємо
+    timer = 0;
+    document.getElementById('timer').textContent = '0:00';
+    timerInterval = setInterval(() => {
+        timer++;
+        document.getElementById('timer').textContent = formatTime(timer);
+    }, 1000);
+}
+
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+}
+
+function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+}
