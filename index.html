@@ -15,18 +15,27 @@
         }
         .on  { background: yellow; }
         .off { background: #333; color: #fff; }
+        button {
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
     <h1>Lights Out</h1>
+
     <label for="levelSelect">Рівень:</label>
     <select id="levelSelect">
         <option value="">— виберіть —</option>
     </select>
-    <button id="resetBtn">Скинути</button>
+
+    <button id="newGameBtn">Нова гра</button>
+    <button id="resetBtn">Рестарт</button>
+
     <div>
-        Ходи: <span id="moveCount">0</span> (мінімум: <span id="minSteps">–</span>)
+        Ходи: <span id="moveCount">0</span> (мінімум: <span id="minSteps">–</span>)<br>
+        Час: <span id="timer">0:00</span>
     </div>
+
     <div id="grid"></div>
 
     <script src="script.js"></script>
