@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initGame() {
     const select = document.getElementById('levelSelect');
 
-    // Додаємо варіанти вибору рівнів
+
     for (let key of Object.keys(levels)) {
         const opt = document.createElement('option');
         opt.value = key;
@@ -28,7 +28,6 @@ function initGame() {
         select.appendChild(opt);
     }
 
-    // Обробник вибору рівня
     select.addEventListener('change', () => {
         if (!select.value) {
             resetBoard();
@@ -38,14 +37,13 @@ function initGame() {
         loadLevel(levels[currentLevelKey]);
     });
 
-    // Кнопка "Рестарт" — перезапуск поточного рівня
+    
     document.getElementById('resetBtn').addEventListener('click', () => {
         if (currentLevelKey) {
             loadLevel(levels[currentLevelKey]);
         }
     });
 
-    // Кнопка "Нова гра" — скидаємо вибір і дошку
     document.getElementById('newGameBtn').addEventListener('click', () => {
         select.value = '';
         currentLevelKey = '';
@@ -134,10 +132,10 @@ function checkWin() {
     return currentGrid.every(row => row.every(cell => cell === 0));
 }
 
-// Таймер
+
 
 function startTimer() {
-    stopTimer(); // якщо вже є таймер, зупиняємо
+    stopTimer(); 
     timer = 0;
     document.getElementById('timer').textContent = '0:00';
     timerInterval = setInterval(() => {
