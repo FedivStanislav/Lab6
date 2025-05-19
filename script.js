@@ -40,14 +40,18 @@ function initGame() {
         if (currentLevelKey) loadLevel(levels[currentLevelKey]); // Рестарт
     });
 
-    // Додаємо кнопку "Нова гра", перевір, що вона є в HTML
     const newGameBtn = document.getElementById('newGameBtn');
     if (newGameBtn) {
         newGameBtn.addEventListener('click', () => {
-            document.getElementById('levelSelect').value = '';
-            stopTimer();
-            resetBoard();
-            currentLevelKey = '';
+            const options = Array.from(select.options).filter(opt => opt.value);
+            if (options.length === 0) return;
+
+            let currentIndex = options.findIndex(opt => opt.value === select.value);
+            let nextIndex = (currentIndex + 1) % options.length;
+
+            select.value = options[nextIndex].value;
+            currentLevelKey = select.value;
+            loadLevel(levels[currentLevelKey]);
         });
     }
 }
@@ -130,7 +134,6 @@ function updateUI() {
 function checkWin() {
     return currentGrid.every(row => row.every(cell => cell === 0));
 }
-
 
 function startTimer() {
     stopTimer();
